@@ -23,6 +23,7 @@ public class UserResource {
         userModel.setRg(userRequest.getRg());
         userModel.setCpf(userRequest.getCpf());
 
+        // persistindo com panache base entity
         userModel.persist();
 
         return Response.ok(userRequest).build();
