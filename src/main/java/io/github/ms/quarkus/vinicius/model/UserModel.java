@@ -1,14 +1,12 @@
 package io.github.ms.quarkus.vinicius.model;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
-import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.*;
 
 import java.util.Objects;
 
 @Entity
 @Table(name = "user")
-public class UserModel extends PanacheEntityBase {
+public class UserModel  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
