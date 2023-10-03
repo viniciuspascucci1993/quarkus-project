@@ -4,6 +4,7 @@ import io.github.ms.quarkus.vinicius.model.UserModel;
 import io.github.ms.quarkus.vinicius.quarkusproject.rest.errors.ResponseError;
 import io.github.ms.quarkus.vinicius.quarkusproject.rest.request.UserRequest;
 import io.github.ms.quarkus.vinicius.repositories.UserRepository;
+import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -46,5 +47,45 @@ public class UserService implements UserRepository , PanacheRepository<UserModel
         userService.persist(userModel);
         log.info("Usuário Criado com Sucesso....{}", userModel);
         return Response.status(Response.Status.CREATED).entity(userModel).build();
+    }
+
+    @Override
+    public Response listAllUsers() {
+        PanacheQuery<UserModel> users = userService.findAll();
+        if (users.list().isEmpty()) {
+            log.info("Usuário não encontrado....");
+            return Response.status(Response.Status.NOT_FOUND).build();
+        }
+
+        log.info("Usuario Encontrado....");
+        return Response.ok(users.list()).build();
+    }
+
+    @Override
+    @Transactional
+    public Response updateUser(Long id, UserRequest userRequest) {
+        log.info("Atualizando Usuario de ID: " + id + "..{}", id);
+        UserModel user = userService.findById(id);
+
+        if (user != null) {
+            user.setName(userRequest.getName());
+            user.setEmailAddress(userRequest.getEmailAddress());
+            user.setRg(userRequest.getRg());
+            user.setCpf(userRequest.getCpf());
+            return Response.ok(userRequest).build();
+        }
+        return Response.status(Response.Status.NOT_FOUND).build();
+    }
+
+    @Override
+    public Response deleteUser(Long id) {
+        UserModel userModel = userService.findById(id);
+
+        if (userModel != null) {
+            userService.delete(userModel);
+            return Response.noContent().build();
+        }
+        log.info("Usuário não encontrado...");
+        return Response.status(Response.Status.NOT_FOUND).build();
     }
 }
